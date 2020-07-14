@@ -26,5 +26,5 @@ app.use(express.json()); // for body parser
 // route middlewares
 app.use("/api/user", authRoutes);
 app.use("/api/dashboard", verifyToken, dashboardRoutes);
-
+ 
 app.listen(3000, () => console.log("server is running..."));

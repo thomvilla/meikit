@@ -27,13 +27,24 @@ router.post("/register", async (req, res) => {
 
   const user = new User({
     name: req.body.name,
+    surname: req.body.surname,
     email: req.body.email,
+    type: req.body.type,
     password,
   });
 
+  const token = jwt.sign(
+    // payload data
+    {
+      name: user.name,
+      id: user._id,
+    },
+    process.env.TOKEN_SECRET
+  );
+
   try {
     const savedUser = await user.save();
-    res.json({ error: null, data: { userId: savedUser._id } });
+    res.json({ error: null, data: { userId: savedUser._id,user: savedUser,token } });
   } catch (error) {
     res.status(400).json({ error });
   }
@@ -67,8 +78,10 @@ router.post("/login", async (req, res) => {
     process.env.TOKEN_SECRET
   );
 
+  res.header("Access-Control-Allow-Origin", "*");
   res.header("auth-token", token).json({
     error: null,
+    userInfo: user,
     data: {
       token,
     },
